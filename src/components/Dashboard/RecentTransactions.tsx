@@ -71,7 +71,11 @@ const initialBeds: Record<string, Record<string, BedData>> = {
   },
 };
 
-export const RecentTransactions = ({ onSelectPage }: { onSelectPage: (page: string) => void }) => {
+export const RecentTransactions = ({
+  onSelectPage,
+}: {
+  onSelectPage?: (page: string) => void;
+}) => {
   const [showAll, setShowAll] = useState(false);
 
   // fungsi hitung status per room
@@ -89,18 +93,15 @@ export const RecentTransactions = ({ onSelectPage }: { onSelectPage: (page: stri
     return { available, occupied, repaired };
   };
 
-  type RouteSelectProps = {
-    selectedPage: string;
-    onSelectPage: (page: string) => void;
-  };
-
   const rooms = Object.entries(initialBeds);
   const visibleRooms = showAll ? rooms : rooms.slice(0, 3);
 
   return (
     <div className="col-span-12 p-4 rounded border border-stone-300 bg-white shadow-sm">
       <div className="mb-4 flex items-center justify-between">
-        <h3 className="flex items-center gap-1.5 font-medium">Bed Availability by Room</h3>
+        <h3 className="flex items-center gap-1.5 font-medium">
+          Bed Availability by Room
+        </h3>
         <button
           onClick={() => setShowAll(!showAll)}
           className="text-sm text-violet-500 hover:underline"
@@ -158,17 +159,23 @@ const TableRow = ({
   occupied: number;
   repaired: number;
   order: number;
-  onSelectPage: (page: string) => void;
+  onSelectPage?: (page: string) => void;
 }) => {
   return (
     <tr className={order % 2 ? "bg-stone-100 text-sm" : "text-sm"}>
       <td className="p-1.5 font-medium text-gray-700">{room}</td>
-      <td className="p-1.5 text-green-700 font-semibold text-center">{available}</td>
-      <td className="p-1.5 text-blue-700 font-semibold text-center">{occupied}</td>
-      <td className="p-1.5 text-red-700 font-semibold text-center">{repaired}</td>
+      <td className="p-1.5 text-green-700 font-semibold text-center">
+        {available}
+      </td>
+      <td className="p-1.5 text-blue-700 font-semibold text-center">
+        {occupied}
+      </td>
+      <td className="p-1.5 text-red-700 font-semibold text-center">
+        {repaired}
+      </td>
       <td className="p-1.5 text-center">
         <button
-          onClick={() => onSelectPage("Bed")}
+          onClick={() => onSelectPage && onSelectPage("Bed")}
           className="px-3 py-1 text-xs font-medium rounded bg-violet-100 text-violet-700 hover:bg-violet-200 transition"
         >
           Detail
