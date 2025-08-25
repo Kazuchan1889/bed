@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FiCalendar } from "react-icons/fi";
-import Calendar, { Value } from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 
 // fungsi format tanggal sesuai contoh
 const formatDate = (date: Date) => {
@@ -55,18 +53,8 @@ const getGreeting = (hour: number) => {
 
 export const TopBar = () => {
   const now = new Date();
-  const [showCalendar, setShowCalendar] = useState(false);
-  // Gunakan tipe Value dari react-calendar (Date | [Date | null, Date | null] | null)
-  const [selectedDate, setSelectedDate] = useState<Value>(now);
-
   const monthsPassed = now.getMonth() + 1; // Januari = 0, jadi +1
   const greeting = getGreeting(now.getHours());
-
-  // Ambil 1 Date yang valid dari Value (untuk display)
-  const selectedAsDate: Date =
-    (Array.isArray(selectedDate)
-      ? selectedDate[0] ?? now
-      : selectedDate ?? now) as Date;
 
   return (
     <div className="border-b px-4 mb-4 mt-2 pb-4 border-stone-200 relative">
@@ -80,26 +68,11 @@ export const TopBar = () => {
 
         <div className="relative">
           <button
-            onClick={() => setShowCalendar((v) => !v)}
             className="flex text-sm items-center gap-2 bg-stone-100 transition-colors hover:bg-violet-100 hover:text-violet-700 px-3 py-1.5 rounded"
           >
             <FiCalendar />
             <span>{monthsPassed} Months</span>
           </button>
-
-          {showCalendar && (
-            <div className="absolute right-0 mt-2 bg-white border border-stone-200 rounded shadow p-3 z-10">
-              <Calendar
-                // onChange menerima Value, bukan Date
-                onChange={(value) => setSelectedDate(value)}
-                value={selectedDate}
-                selectRange={false}
-              />
-              <p className="mt-2 text-xs text-stone-600">
-                Selected: {formatDate(selectedAsDate)}
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
