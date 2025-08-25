@@ -15,38 +15,38 @@ import {
 const data = [
   {
     name: "Jan",
-    Returning: 275,
-    New: 41,
+    Used: 275,
+    Repaired: 41,
   },
   {
     name: "Feb",
-    Returning: 620,
-    New: 96,
+    Used: 620,
+    Repaired: 96,
   },
   {
     name: "Mar",
-    Returning: 202,
-    New: 192,
+    Used: 202,
+    Repaired: 192,
   },
   {
     name: "Apr",
-    Returning: 500,
-    New: 50,
+    Used: 500,
+    Repaired: 50,
   },
   {
     name: "May",
-    Returning: 355,
-    New: 400,
+    Used: 355,
+    Repaired: 400,
   },
   {
     name: "Jun",
-    Returning: 875,
-    New: 200,
+    Used: 875,
+    Repaired: 200,
   },
   {
     name: "Jul",
-    Returning: 700,
-    New: 205,
+    Used: 700,
+    Repaired: 205,
   },
 ];
 
@@ -55,7 +55,7 @@ export const ActivityGraph = () => {
     <div className="col-span-8 overflow-hidden rounded border border-stone-300">
       <div className="p-4">
         <h3 className="flex items-center gap-1.5 font-medium">
-          <FiUser /> Activity
+          <FiUser /> Bed's statistics
         </h3>
       </div>
 
@@ -91,13 +91,13 @@ export const ActivityGraph = () => {
             />
             <Line
               type="monotone"
-              dataKey="New"
+              dataKey="Used"
               stroke="#18181b"
               fill="#18181b"
             />
             <Line
               type="monotone"
-              dataKey="Returning"
+              dataKey="Repaired"
               stroke="#5b21b6"
               fill="#5b21b6"
             />
