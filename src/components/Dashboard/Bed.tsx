@@ -15,13 +15,13 @@ type BedData = {
 };
 
 export default function Bed() {
-     const [rooms, setRooms] = useState(["Room 101", "Room 102", "Room 103"]);
+    const [rooms, setRooms] = useState(["Room 101", "Room 102", "Room 103"]);
     const [selectedRoom, setSelectedRoom] = useState(rooms[0]);
     // state untuk add room
     const [showAddRoomModal, setShowAddRoomModal] = useState(false);
     const [newRoomName, setNewRoomName] = useState("");
     const [newRoomBeds, setNewRoomBeds] = useState(1);
-   
+
 
 
 
@@ -110,6 +110,24 @@ export default function Bed() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    // Potong bed jadi grup 4 (2 col × 2 row)
+  const chunkBeds = (arr: string[], size: number) => {
+    return arr.reduce((acc: string[][], _, i) => {
+      if (i % size === 0) acc.push(arr.slice(i, i + size));
+      return acc;
+    }, []);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setActiveBed(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
     return (
         <div className="p-6 bg-white rounded-lg shadow flex flex-col gap-6">
             {/* Section 1 */}
@@ -145,85 +163,112 @@ export default function Bed() {
                 </div>
 
                 {/* Container bed */}
-                <div className="p-4 border rounded-lg bg-gray-50">
-                    <h2 className="font-semibold mb-3">{selectedRoom} Beds</h2>
+                <div className="p-6 border rounded-lg bg-gray-50">
+                    <h2 className="font-semibold mb-4">{selectedRoom} Beds</h2>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        {Object.keys(beds[selectedRoom]).map((bed) => (
-                            <div
-                                key={bed}
-                                className={`h-24 flex items-center justify-center border rounded-lg shadow cursor-pointer relative ${bedColor(
-                                    beds[selectedRoom][bed].status
-                                )}`}
-                                onClick={() => setActiveBed(bed)}
-                            >
-                                {bed}
+                    <div className="space-y-8">
+                        {chunkBeds(Object.keys(beds[selectedRoom]), 4).map(
+                            (group, groupIndex) => (
+                                <div
+                                    key={groupIndex}
+                                    className="grid grid-cols-2 grid-rows-2 gap-6"
+                                >
+                                    {group.map((bed) => (
+                                        <div
+                                            key={bed}
+                                            className="relative flex flex-col items-center cursor-pointer"
+                                            onClick={() => setActiveBed(bed)}
+                                        >
+                                            {/* SVG Bed */}
+                                            <svg
+                                                viewBox="0 0 512 512"
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                className={`w-24 h-24 ${bedColor(
+                                                    beds[selectedRoom][bed].status
+                                                )}`}
+                                                fill="currentColor"
+                                            >
+                                                <path d="m496 320c0-15.581 0-282.497 0-296 0-8.836-7.163-16-16-16s-16 7.164-16 16v16h-416v-16c0-8.836-7.164-16-16-16s-16 7.164-16 16v296c-8.836 0-16 7.164-16 16v152c0 8.836 7.164 16 16 16h56c6.061 0 11.601-3.424 14.311-8.845l19.578-39.155h300.223l19.578 39.155c2.71 5.421 8.25 8.845 14.311 8.845h56c8.837 0 16-7.164 16-16v-152c-.001-8.836-7.164-16-16.001-16zm-32-91.833c-11.449-7.679-25.209-12.167-40-12.167h-56v-32c0-35.29-28.71-64-64-64h-96c-35.29 0-64 28.71-64 64v32h-56c-14.791 0-28.551 4.488-40 12.167v-156.167h416zm-128-12.167h-160v-32c0-17.645 14.355-32 32-32h96c17.645 0 32 14.355 32 32zm-288 72c0-22.056 17.944-40 40-40h336c22.056 0 40 17.944 40 40v32h-416zm432 184h-30.111l-19.578-39.155c-2.71-5.421-8.25-8.845-14.311-8.845h-320c-6.061 0-11.601 3.424-14.311 8.845l-19.578 39.155h-30.111v-120h448z"></path>
+                                            </svg>
 
-                                {/* Dropdown menu kecil */}
-                                {activeBed === bed && (
-                                    <div
-                                        ref={menuRef}
-                                        className="absolute top-full mt-2 right-0 bg-white shadow rounded border w-36 z-10"
-                                    >
-                                        <button
-                                            disabled={beds[selectedRoom][bed].status === "repair"}
-                                            className={`block w-full text-left px-3 py-2 ${beds[selectedRoom][bed].status === "repair"
-                                                ? "text-gray-400 cursor-not-allowed"
-                                                : "hover:bg-violet-100"
-                                                }`}
-                                            onClick={() => {
-                                                if (beds[selectedRoom][bed].status !== "repair") {
-                                                    setSelectedBed(bed);
-                                                    setShowAssignModal(true);
-                                                    setActiveBed(null);
-                                                }
-                                            }}
-                                        >
-                                            Assigned
-                                        </button>
-                                        <button
-                                            disabled={beds[selectedRoom][bed].status === "repair"}
-                                            className={`block w-full text-left px-3 py-2 ${beds[selectedRoom][bed].status === "repair"
-                                                ? "text-gray-400 cursor-not-allowed"
-                                                : "hover:bg-violet-100"
-                                                }`}
-                                            onClick={() => {
-                                                if (beds[selectedRoom][bed].status !== "repair") {
-                                                    updateBed(bed, { status: "unassigned" });
-                                                    setActiveBed(null);
-                                                }
-                                            }}
-                                        >
-                                            Un-assigned
-                                        </button>
+                                            <span className="mt-2 text-sm font-medium">{bed}</span>
 
-                                        <button
-                                            className="block w-full text-left px-3 py-2 hover:bg-violet-100"
-                                            onClick={() => {
-                                                setSelectedBed(bed);
-                                                setShowRepairModal(true);
-                                                setActiveBed(null);
-                                            }}
-                                        >
-                                            Repair
-                                        </button>
-                                        <button
-                                            className="block w-full text-left px-3 py-2 hover:bg-violet-100"
-                                            onClick={() => {
-                                                setSelectedBed(bed);
-                                                setShowDetailModal(true);
-                                                setActiveBed(null);
-                                            }}
-                                        >
-                                            Detail
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                                            {/* Dropdown */}
+                                            {activeBed === bed && (
+                                                <div
+                                                    ref={menuRef}
+                                                    className="absolute top-full mt-2 right-0 bg-white shadow rounded border w-40 z-10"
+                                                >
+                                                    <button
+                                                        disabled={
+                                                            beds[selectedRoom][bed].status === "repair"
+                                                        }
+                                                        className={`block w-full text-left px-3 py-2 ${beds[selectedRoom][bed].status === "repair"
+                                                                ? "text-gray-400 cursor-not-allowed"
+                                                                : "hover:bg-violet-100"
+                                                            }`}
+                                                        onClick={() => {
+                                                            if (
+                                                                beds[selectedRoom][bed].status !== "repair"
+                                                            ) {
+                                                                setSelectedBed(bed);
+                                                                setShowAssignModal(true);
+                                                                setActiveBed(null);
+                                                            }
+                                                        }}
+                                                    >
+                                                        Assigned
+                                                    </button>
+                                                    <button
+                                                        disabled={
+                                                            beds[selectedRoom][bed].status === "repair"
+                                                        }
+                                                        className={`block w-full text-left px-3 py-2 ${beds[selectedRoom][bed].status === "repair"
+                                                                ? "text-gray-400 cursor-not-allowed"
+                                                                : "hover:bg-violet-100"
+                                                            }`}
+                                                        onClick={() => {
+                                                            if (
+                                                                beds[selectedRoom][bed].status !== "repair"
+                                                            ) {
+                                                                updateBed(bed, { status: "unassigned" });
+                                                                setActiveBed(null);
+                                                            }
+                                                        }}
+                                                    >
+                                                        Un-assigned
+                                                    </button>
+                                                    <button
+                                                        className="block w-full text-left px-3 py-2 hover:bg-violet-100"
+                                                        onClick={() => {
+                                                            setSelectedBed(bed);
+                                                            setShowRepairModal(true);
+                                                            setActiveBed(null);
+                                                        }}
+                                                    >
+                                                        Repair
+                                                    </button>
+                                                    <button
+                                                        className="block w-full text-left px-3 py-2 hover:bg-violet-100"
+                                                        onClick={() => {
+                                                            setSelectedBed(bed);
+                                                            setShowDetailModal(true);
+                                                            setActiveBed(null);
+                                                        }}
+                                                    >
+                                                        Detail
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )
+                        )}
                     </div>
                 </div>
             </div>
+
 
             {/* Modal Assign */}
             {showAssignModal && selectedBed && (
