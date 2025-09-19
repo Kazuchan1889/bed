@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { Dashboard } from "@/components/Dashboard/Dashboard";
 import Bed from "../components/Dashboard/Bed";        // ✅ default import
 import Personel from "@/components/Dashboard/Personel"; // ✅ default import
-
+import Bed2 from "../components/Dashboard/Bed2";   
 export default function Home() {
   const [selectedPage, setSelectedPage] = useState("Dashboard");
 
@@ -15,6 +15,8 @@ export default function Home() {
         return <Dashboard />;
       case "Bed":
         return <Bed />;
+      case "Bed2":
+        return <Bed2 />;
       case "Personel":
         return <Personel />;
       default:

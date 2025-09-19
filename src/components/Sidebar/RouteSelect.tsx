@@ -22,6 +22,12 @@ export const RouteSelect = ({ selectedPage, onSelectPage }: RouteSelectProps) =>
         onClick={() => onSelectPage("Bed")}
       />
       <Route
+        Icon={FiUsers} // Bisa ganti dengan ikon yang lebih relevan
+        selected={selectedPage === "Bed2"}
+        title="Room 2"
+        onClick={() => onSelectPage("Bed2")} // Menggunakan nilai yang berbeda untuk bed 2
+      />
+      <Route
         Icon={FiPaperclip}
         selected={selectedPage === "Personel"}
         title="Personel"
